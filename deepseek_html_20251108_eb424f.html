@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEXUS v4.2 - Elite SIM Exploitation Suite</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --neon-green: #00ff9d;
+            --neon-red: #ff003c;
+            --neon-blue: #00a8ff;
+            --dark-bg: #0a0a0f;
+            --darker-bg: #050508;
+            --card-bg: #11111a;
+        }
+        
+        body {
+            font-family: 'JetBrains Mono', monospace;
+            background-color: var(--dark-bg);
+            color: #e0e0e0;
+            overflow-x: hidden;
+        }
+        
+        .hacker-font {
+            font-family: 'Rajdhani', sans-serif;
+        }
+        
+        .neon-text {
+            text-shadow: 0 0 5px currentColor, 0 0 10px currentColor, 0 0 15px currentColor;
+        }
+        
+        .neon-border {
+            box-shadow: 0 0 5px currentColor, 0 0 10px currentColor, inset 0 0 5px currentColor;
+        }
+        
+        .cyber-card {
+            background: var(--card-bg);
+            border-radius: 8px;
+            border: 1px solid rgba(0, 255, 157, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .cyber-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--neon-green), transparent);
+        }
+        
+        .cyber-card::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--neon-green), transparent);
+        }
+        
+        .scanline {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .scanline::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--neon-green), transparent);
+            animation: scanline 8s linear infinite;
+            z-index: 10;
+        }
+        
+        @keyframes scanline {
+            0% { top: 0; }
+            100% { top: 100%; }
+        }
+        
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(0, 255, 157, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(0, 255, 157, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(0, 255, 157, 0); }
+        }
+        
+        .glitch {
+            position: relative;
+        }
+        
+        .glitch::before, .glitch::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .glitch::before {
+            left: 2px;
+            text-shadow: -2px 0 #ff003c;
+            clip: rect(44px, 450px, 56px, 0);
+            animation: glitch-anim 5s infinite linear alternate-reverse;
+        }
+        
+        .glitch::after {
+            left: -2px;
+            text-shadow: -2px 0 #00a8ff;
+            clip: rect(44px, 450px, 56px, 0);
+            animation: glitch-anim2 5s infinite linear alternate-reverse;
+        }
+        
+        @keyframes glitch-anim {
+            0% { clip: rect(42px, 9999px, 63px, 0); }
+            5% { clip: rect(19px, 9999px, 34px, 0); }
+            10% { clip: rect(32px, 9999px, 30px, 0); }
+            15% { clip: rect(64px, 9999px, 60px, 0); }
+            20% { clip: rect(46px, 9999px, 25px, 0); }
+            25% { clip: rect(38px, 9999px, 33px, 0); }
+            30% { clip: rect(67px, 9999px, 56px, 0); }
+            35% { clip: rect(22px, 9999px, 29px, 0); }
+            40% { clip: rect(12px, 9999px, 72px, 0); }
+            45% { clip: rect(60px, 9999px, 26px, 0); }
+            50% { clip: rect(71px, 9999px, 38px, 0); }
+            55% { clip: rect(28px, 9999px, 13px, 0); }
+            60% { clip: rect(15px, 9999px, 70px, 0); }
+            65% { clip: rect(31px, 9999px, 49px, 0); }
+            70% { clip: rect(19px, 9999px, 27px, 0); }
+            75% { clip: rect(68px, 9999px, 50px, 0); }
+            80% { clip: rect(55px, 9999px, 72px, 0); }
+            85% { clip: rect(5px, 9999px, 39px, 0); }
+            90% { clip: rect(33px, 9999px, 58px, 0); }
+            95% { clip: rect(62px, 9999px, 44px, 0); }
+            100% { clip: rect(34px, 9999px, 65px, 0); }
+        }
+        
+        @keyframes glitch-anim2 {
+            0% { clip: rect(25px, 9999px, 42px, 0); }
+            5% { clip: rect(55px, 9999px, 19px, 0); }
+            10% { clip: rect(13px, 9999px, 32px, 0); }
+            15% { clip: rect(70px, 9999px, 64px, 0); }
+            20% { clip: rect(30px, 9999px, 46px, 0); }
+            25% { clip: rect(40px, 9999px, 38px, 0); }
+            30% { clip: rect(50px, 9999px, 67px, 0); }
+            35% { clip: rect(25px, 9999px, 22px, 0); }
+            40% { clip: rect(65px, 9999px, 12px, 0); }
+            45% { clip: rect(20px, 9999px, 60px, 0); }
+            50% { clip: rect(35px, 9999px, 71px, 0); }
+            55% { clip: rect(45px, 9999px, 28px, 0); }
+            60% { clip: rect(60px, 9999px, 15px, 0); }
+            65% { clip: rect(25px, 9999px, 31px, 0); }
+            70% { clip: rect(45px, 9999px, 19px, 0); }
+            75% { clip: rect(55px, 9999px, 68px, 0); }
+            80% { clip: rect(30px, 9999px, 55px, 0); }
+            85% { clip: rect(40px, 9999px, 5px, 0); }
+            90% { clip: rect(50px, 9999px, 33px, 0); }
+            95% { clip: rect(65px, 9999px, 62px, 0); }
+            100% { clip: rect(45px, 9999px, 34px, 0); }
+        }
+        
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s, transform 0.6s;
+        }
+        
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .terminal-text {
+            background: rgba(0, 0, 0, 0.7);
+            border-left: 3px solid var(--neon-green);
+            padding: 1rem;
+            font-family: 'JetBrains Mono', monospace;
+            position: relative;
+        }
+        
+        .terminal-text::before {
+            content: '>';
+            position: absolute;
+            left: 8px;
+            color: var(--neon-green);
+        }
+        
+        .binary-bg {
+            background-image: 
+                linear-gradient(rgba(10, 10, 15, 0.9), rgba(10, 10, 15, 0.9)),
+                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Ctext x='10' y='20' font-family='monospace' font-size='10' fill='%2300ff9d' opacity='0.1'%3E1010%3C/text%3E%3Ctext x='50' y='40' font-family='monospace' font-size='10' fill='%2300ff9d' opacity='0.1'%3E0101%3C/text%3E%3Ctext x='30' y='60' font-family='monospace' font-size='10' fill='%2300ff9d' opacity='0.1'%3E1100%3C/text%3E%3Ctext x='70' y='80' font-family='monospace' font-size='10' fill='%2300ff9d' opacity='0.1'%3E0011%3C/text%3E%3C/svg%3E");
+        }
+    </style>
+</head>
+<body class="binary-bg">
+    <!-- Header -->
+    <header class="sticky top-0 z-50 bg-[#050508] bg-opacity-90 backdrop-blur-md border-b border-[#00ff9d] border-opacity-30">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center">
+                <div class="w-10 h-10 bg-gradient-to-r from-[#00ff9d] to-[#00a8ff] rounded-md mr-3 flex items-center justify-center">
+                    <span class="hacker-font font-bold text-black">N</span>
+                </div>
+                <h1 class="hacker-font text-xl text-[#00ff9d] neon-text">NEXUS<span class="text-[#ff003c]">v4.2</span></h1>
+            </div>
+            <div class="flex items-center space-x-4">
+                <span class="text-[#ff003c] text-sm hacker-font bg-black bg-opacity-50 px-3 py-1 rounded-md">
+                    <i class="fas fa-exclamation-triangle mr-1"></i> Only 3 copies left
+                </span>
+                <a href="https://t.me/prank001" target="_blank" class="bg-gradient-to-r from-[#ff003c] to-[#ff6b6b] hover:from-[#ff003c] hover:to-[#ff003c] text-white px-4 py-2 rounded hacker-font transition duration-300 pulse">
+                    <i class="fab fa-telegram-plane mr-2"></i>Buy Now
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="py-20 px-4 relative overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-b from-transparent to-[#050508] z-0"></div>
+        <div class="container mx-auto text-center relative z-10">
+            <div class="mb-6">
+                <span class="bg-[#ff003c] bg-opacity-20 text-[#ff6b6b] px-3 py-1 rounded-full text-sm hacker-font border border-[#ff003c] border-opacity-30">
+                    <i class="fas fa-bolt mr-1"></i>NEW RELEASE
+                </span>
+            </div>
+            <h1 class="hacker-font text-5xl md:text-7xl font-bold mb-4 glitch" data-text="NEXUS SIM EXPLOITATION SUITE v4.2">
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#00ff9d] to-[#00a8ff]">NEXUS SIM EXPLOITATION SUITE v4.2</span>
+            </h1>
+            <p class="text-xl md:text-2xl mb-8 text-gray-300 max-w-3xl mx-auto">Advanced SS7 & SIM Swap technology developed by Russian cybersecurity experts</p>
+            
+            <div class="flex justify-center items-center mb-10">
+                <span class="text-2xl line-through text-gray-500 mr-4">$999</span>
+                <span class="text-5xl hacker-font text-[#ff003c] neon-text">$300</span>
+            </div>
+            
+            <div class="mb-10 max-w-2xl mx-auto">
+                <div class="cyber-card p-4 mb-4">
+                    <p class="text-[#00ff9d] hacker-font"><i class="fas fa-exclamation-circle mr-2"></i>Warning: Only 3 copies remaining at this price</p>
+                    <p class="text-sm text-gray-400">Price increases to $800 after final copies are sold</p>
+                </div>
+            </div>
+            
+            <a href="https://t.me/prank001" target="_blank" class="inline-block bg-gradient-to-r from-[#ff003c] to-[#ff3366] hover:from-[#ff003c] hover:to-[#ff003c] text-white text-xl hacker-font px-8 py-4 rounded-lg transition duration-300 transform hover:scale-105 mb-6 pulse">
+                <i class="fas fa-shopping-cart mr-2"></i>ORDER NOW
+            </a>
+            
+            <p class="text-gray-400 text-sm"><i class="fas fa-shield-alt mr-1"></i>Contact: Telegram @prank001 | Bitcoin/Monero Only</p>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="py-16 px-4">
+        <div class="container mx-auto">
+            <h2 class="hacker-font text-4xl md:text-5xl text-center mb-4 text-[#00ff9d] neon-text">ADVANCED CAPABILITIES</h2>
+            <p class="text-center text-gray-400 mb-12 max-w-2xl mx-auto">Next-generation SIM exploitation technology with military-grade encryption and stealth operation</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Feature 1 -->
+                <div class="cyber-card p-6 hover:border-[#00ff9d] transition duration-300 fade-in scanline">
+                    <div class="w-12 h-12 bg-gradient-to-br from-[#00ff9d] to-[#00a8ff] rounded-md flex items-center justify-center mb-4">
+                        <i class="fas fa-bolt text-black text-xl"></i>
+                    </div>
+                    <h3 class="hacker-font text-xl text-[#00ff9d] mb-2">Zero-Click SS7 Exploitation</h3>
+                    <p class="text-gray-400">Full SS7 network access without target interaction. Bypasses all modern security systems with 100% success rate.</p>
+                </div>
+                
+                <!-- Feature 2 -->
+                <div class="cyber-card p-6 hover:border-[#00ff9d] transition duration-300 fade-in scanline">
+                    <div class="w-12 h-12 bg-gradient-to-br from-[#00ff9d] to-[#00a8ff] rounded-md flex items-center justify-center mb-4">
+                        <i class="fas fa-sms text-black text-xl"></i>
+                    </div>
+                    <h3 class="hacker-font text-xl text-[#00ff9d] mb-2">Real-time SMS Interception</h3>
+                    <p class="text-gray-400">Bypass 2FA and OTP systems. Intercept all messages without carrier detection or target notification.</p>
+                </div>
+                
+                <!-- Feature 3 -->
+                <div class="cyber-card p-6 hover:border-[#00ff9d] transition duration-300 fade-in scanline">
+                    <div class="w-12 h-12 bg-gradient-to-br from-[#00ff9d] to-[#00a8ff] rounded-md flex items-center justify-center mb-4">
+                        <i class="fas fa-sim-card text-black text-xl"></i>
+                    </div>
+                    <h3 class="hacker-font text-xl text-[#00ff9d] mb-2">Complete SIM Takeover in 3 Minutes</h3>
+                    <p class="text-gray-400">Automated SIM Swap process with guaranteed success. Works with carriers in 200+ countries worldwide.</p>
+                </div>
+                
+                <!-- Feature 4 -->
+                <div class="cyber-card p-6 hover:border-[#00ff9d] transition duration-300 fade-in scanline">
+                    <div class="w-12 h-12 bg-gradient-to-br from-[#00ff9d] to-[#00a8ff] rounded-md flex items-center justify-center mb-4">
+                        <i class="fas fa-user-secret text-black text-xl"></i>
+                    </div>
+                    <h3 class="hacker-font text-xl text-[#00ff9d] mb-2">Undetectable by Security Systems</h3>
+                    <p class="text-gray-400">Advanced obfuscation techniques. Military-grade encryption hides all traces of activity from forensic analysis.</p>
+                </div>
+                
+                <!-- Feature 5 -->
+                <div class="cyber-card p-6 hover:border-[#00ff9d] transition duration-300 fade-in scanline">
+                    <div class="w-12 h-12 bg-gradient-to-br from-[#00ff9d] to-[#00a8ff] rounded-md flex items-center justify-center mb-4">
+                        <i class="fas fa-eraser text-black text-xl"></i>
+                    </div>
+                    <h3 class="hacker-font text-xl text-[#00ff9d] mb-2">Auto-Clean Digital Footprints</h3>
+                    <p class="text-gray-400">Automatic deletion of all logs and activity traces. Zero forensic evidence left behind after operations.</p>
+                </div>
+                
+                <!-- Feature 6 -->
+                <div class="cyber-card p-6 hover:border-[#00ff9d] transition duration-300 fade-in scanline">
+                    <div class="w-12 h-12 bg-gradient-to-br from-[#00ff9d] to-[#00a8ff] rounded-md flex items-center justify-center mb-4">
+                        <i class="fas fa-globe text-black text-xl"></i>
+                    </div>
+                    <h3 class="hacker-font text-xl text-[#00ff9d] mb-2">Global Carrier Database</h3>
+                    <p class="text-gray-400">Complete database of carrier vulnerabilities worldwide. Regular updates with new exploits and techniques.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="py-16 px-4">
+        <div class="container mx-auto">
+            <h2 class="hacker-font text-4xl md:text-5xl text-center mb-4 text-[#00ff9d] neon-text">VERIFIED USER TESTIMONIALS</h2>
+            <p class="text-center text-gray-400 mb-12 max-w-2xl mx-auto">Trusted by security professionals and penetration testers worldwide</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Testimonial 1 -->
+                <div class="cyber-card p-6 fade-in">
+                    <div class="flex items-center mb-4">
+                        <div class="w-10 h-10 bg-gradient-to-r from-[#ff003c] to-[#ff6b6b] rounded-full mr-3 flex items-center justify-center">
+                            <span class="text-white text-sm font-bold">DV</span>
+                        </div>
+                        <div>
+                            <h4 class="hacker-font text-[#00ff9d]">Dmitry Volkov</h4>
+                            <p class="text-gray-500 text-sm">Security Researcher, Moscow</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-300 mb-4">"Used NEXUS for banking security testing. 100% success on first attempt. Russian engineering at its finest!"</p>
+                    <div class="flex text-yellow-400">
+                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                    </div>
+                </div>
+                
+                <!-- Testimonial 2 -->
+                <div class="cyber-card p-6 fade-in">
+                    <div class="flex items-center mb-4">
+                        <div class="w-10 h-10 bg-gradient-to-r from-[#ff003c] to-[#ff6b6b] rounded-full mr-3 flex items-center justify-center">
+                            <span class="text-white text-sm font-bold">AK</span>
+                        </div>
+                        <div>
+                            <h4 class="hacker-font text-[#00ff9d]">Alexey Kuznetsov</h4>
+                            <p class="text-gray-500 text-sm">Penetration Tester, St. Petersburg</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-300 mb-4">"NEXUS v4.2 exceeded expectations. SIM takeover in under 3 minutes. Zero traces in carrier logs."</p>
+                    <div class="flex text-yellow-400">
+                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                    </div>
+                </div>
+                
+                <!-- Testimonial 3 -->
+                <div class="cyber-card p-6 fade-in">
+                    <div class="flex items-center mb-4">
+                        <div class="w-10 h-10 bg-gradient-to-r from-[#ff003c] to-[#ff6b6b] rounded-full mr-3 flex items-center justify-center">
+                            <span class="text-white text-sm font-bold">SM</span>
+                        </div>
+                        <div>
+                            <h4 class="hacker-font text-[#00ff9d]">Sergei Morozov</h4>
+                            <p class="text-gray-500 text-sm">Telecom Security, Kyiv</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-300 mb-4">"Flawless performance. Used for telecom security audit. Found 0 vulnerabilities in their system after our test."</p>
+                    <div class="flex text-yellow-400">
+                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Technical Specs -->
+    <section class="py-16 px-4">
+        <div class="container mx-auto">
+            <h2 class="hacker-font text-4xl md:text-5xl text-center mb-4 text-[#00ff9d] neon-text">TECHNICAL SPECIFICATIONS</h2>
+            <p class="text-center text-gray-400 mb-12 max-w-2xl mx-auto">Professional-grade tool with enterprise-level capabilities</p>
+            
+            <div class="cyber-card p-8 max-w-4xl mx-auto fade-in">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div>
+                        <h3 class="hacker-font text-xl text-[#00ff9d] mb-4"><i class="fas fa-desktop mr-2"></i>System Requirements</h3>
+                        <ul class="text-gray-300 space-y-2">
+                            <li><i class="fas fa-check text-[#00ff9d] mr-2"></i>Windows 10/11 or Linux (Kali, Parrot)</li>
+                            <li><i class="fas fa-check text-[#00ff9d] mr-2"></i>8GB RAM (16GB recommended)</li>
+                            <li><i class="fas fa-check text-[#00ff9d] mr-2"></i>2GB free storage space</li>
+                            <li><i class="fas fa-check text-[#00ff9d] mr-2"></i>Stable internet connection</li>
+                            <li><i class="fas fa-check text-[#00ff9d] mr-2"></i>Python 3.8+ (included in package)</li>
+                        </ul>
+                    </div>
+                    
+                    <div>
+                        <h3 class="hacker-font text-xl text-[#00ff9d] mb-4"><i class="fas fa-network-wired mr-2"></i>Compatibility</h3>
+                        <ul class="text-gray-300 space-y-2">
+                            <li><i class="fas fa-check text-[#00ff9d] mr-2"></i>All GSM operators (200+ countries)</li>
+                            <li><i class="fas fa-check text-[#00ff9d] mr-2"></i>2G/3G/4G/5G networks</li>
+                            <li><i class="fas fa-check text-[#00ff9d] mr-2"></i>VoLTE and VoWiFi</li>
+                            <li><i class="fas fa-check text-[#00ff9d] mr-2"></i>eSIM technologies</li>
+                            <li><i class="fas fa-check text-[#00ff9d] mr-2"></i>All modern SIM card models</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="mt-8 pt-6 border-t border-[#00ff9d] border-opacity-30">
+                    <h3 class="hacker-font text-xl text-[#00ff9d] mb-4"><i class="fas fa-sync-alt mr-2"></i>Update Policy</h3>
+                    <p class="text-gray-300">Free security updates for 12 months. Free major updates until v5.0. Lifetime technical support in Russian and English.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="py-16 px-4">
+        <div class="container mx-auto max-w-4xl">
+            <h2 class="hacker-font text-4xl md:text-5xl text-center mb-4 text-[#00ff9d] neon-text">FREQUENTLY ASKED QUESTIONS</h2>
+            <p class="text-center text-gray-400 mb-12 max-w-2xl mx-auto">Everything you need to know about NEXUS v4.2</p>
+            
+            <div class="space-y-6">
+                <!-- FAQ 1 -->
+                <div class="cyber-card p-6 fade-in">
+                    <h3 class="hacker-font text-lg text-[#00ff9d] mb-2"><i class="fas fa-shipping-fast mr-2"></i>How is delivery handled?</h3>
+                    <p class="text-gray-300">After payment confirmation, you receive an encrypted download link through a secure channel. The archive is protected with a unique password sent separately.</p>
+                </div>
+                
+                <!-- FAQ 2 -->
+                <div class="cyber-card p-6 fade-in">
+                    <h3 class="hacker-font text-lg text-[#00ff9d] mb-2"><i class="fas fa-money-bill-wave mr-2"></i>What payment methods are accepted?</h3>
+                    <p class="text-gray-300">Cryptocurrencies only: Bitcoin (BTC) and Monero (XMR). Monero is preferred for complete anonymity. Payment requires 2 blockchain confirmations.</p>
+                </div>
+                
+                <!-- FAQ 3 -->
+                <div class="cyber-card p-6 fade-in">
+                    <h3 class="hacker-font text-lg text-[#00ff9d] mb-2"><i class="fas fa-gavel mr-2"></i>Is this legal?</h3>
+                    <p class="text-gray-300">NEXUS is developed for educational purposes and security testing. Users bear full responsibility for compliance with local laws. Recommended for use in controlled environments only.</p>
+                </div>
+                
+                <!-- FAQ 4 -->
+                <div class="cyber-card p-6 fade-in">
+                    <h3 class="hacker-font text-lg text-[#00ff9d] mb-2"><i class="fas fa-shield-alt mr-2"></i>Is there a warranty?</h3>
+                    <p class="text-gray-300">Yes, 30-day money-back guarantee provided the tool doesn't perform as advertised. All requests are processed through secure communication channels.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Order Section -->
+    <section class="py-16 px-4">
+        <div class="container mx-auto max-w-4xl">
+            <div class="cyber-card p-8 border-[#ff003c] fade-in">
+                <h2 class="hacker-font text-4xl md:text-5xl text-center mb-6 text-[#ff003c] neon-text">ORDER NEXUS v4.2</h2>
+                
+                <div class="text-center mb-8">
+                    <p class="text-xl text-gray-300 mb-4">Price: <span class="line-through text-gray-500">$999</span> <span class="text-[#ff003c] hacker-font text-3xl">$300</span></p>
+                    <p class="text-[#00ff9d] hacker-font bg-black bg-opacity-50 inline-block px-4 py-2 rounded-md">
+                        <i class="fas fa-exclamation-triangle mr-2"></i>Only 3 copies remaining at this price!
+                    </p>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+                    <div>
+                        <h3 class="hacker-font text-xl text-[#00ff9d] mb-4"><i class="fas fa-list-ol mr-2"></i>Order Process:</h3>
+                        <ol class="text-gray-300 space-y-2 list-decimal list-inside">
+                            <li>Contact us on Telegram: @prank001</li>
+                            <li>Confirm your order and receive payment address</li>
+                            <li>Send payment (BTC/XMR)</li>
+                            <li>Receive tool within 24 hours</li>
+                        </ol>
+                    </div>
+                    
+                    <div>
+                        <h3 class="hacker-font text-xl text-[#00ff9d] mb-4"><i class="fas fa-address-book mr-2"></i>Contact Methods:</h3>
+                        <ul class="text-gray-300 space-y-2">
+                            <li><i class="fab fa-telegram-plane text-[#00a8ff] mr-2"></i>Telegram: <a href="https://t.me/prank001" target="_blank" class="text-[#00ff9d] hover:underline">@prank001</a></li>
+                            <li><i class="fas fa-mobile-alt text-[#00a8ff] mr-2"></i>Signal: +7 (XXX) XXX-XX-XX (after verification)</li>
+                            <li><i class="fas fa-envelope text-[#00a8ff] mr-2"></i>ProtonMail: nexus_support@protonmail.com</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="text-center">
+                    <a href="https://t.me/prank001" target="_blank" class="inline-block bg-gradient-to-r from-[#ff003c] to-[#ff3366] hover:from-[#ff003c] hover:to-[#ff003c] text-white hacker-font text-xl px-8 py-4 rounded-lg transition duration-300 transform hover:scale-105 pulse">
+                        <i class="fab fa-telegram-plane mr-2"></i>CONTACT ON TELEGRAM
+                    </a>
+                    <p class="text-gray-400 text-sm mt-4"><i class="fas fa-clock mr-1"></i>Response time: 5-15 minutes</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-8 px-4 border-t border-[#00ff9d] border-opacity-30">
+        <div class="container mx-auto text-center">
+            <p class="text-gray-500 text-sm mb-4">NEXUS SIM Exploitation Suite v4.2 - Russian-developed technology for professionals</p>
+            <p class="text-gray-600 text-xs">For educational and research purposes only. Users bear full responsibility for compliance with local laws. All transactions are final.</p>
+            <p class="text-gray-600 text-xs mt-2">© 2023 NEXUS Security Research Group. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Fade in elements on scroll
+        document.addEventListener('DOMContentLoaded', function() {
+            const fadeElements = document.querySelectorAll('.fade-in');
+            
+            const fadeInObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, { threshold: 0.1 });
+            
+            fadeElements.forEach(element => {
+                fadeInObserver.observe(element);
+            });
+            
+            // Add terminal-like typing effect to testimonials
+            const testimonials = document.querySelectorAll('.cyber-card p.text-gray-300');
+            testimonials.forEach(testimonial => {
+                const originalText = testimonial.textContent;
+                testimonial.textContent = '';
+                
+                let i = 0;
+                const typeWriter = () => {
+                    if (i < originalText.length) {
+                        testimonial.textContent += originalText.charAt(i);
+                        i++;
+                        setTimeout(typeWriter, 10);
+                    }
+                };
+                
+                // Start typing when testimonial is in view
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            typeWriter();
+                            observer.unobserve(entry.target);
+                        }
+                    });
+                });
+                
+                observer.observe(testimonial);
+            });
+        });
+    </script>
+</body>
+</html>
